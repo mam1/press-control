@@ -6,16 +6,15 @@
 		 		create - mam 10/16/2017
 */
 
-#include "simpletools.h"                   // Library include
+#include "simpletools.h"					// Library include
 #include "press control.h"
 
-void set_dwell();                          // Forward declaration
-void save_dwell();                         // Forward declaration
-void up();                                 // Forward declaration
-void down();                               // Forward declaration
-volatile int 		dwell;				   // dwell time in seconds, shared between cogs
+void set_dwell();							// Forward declaration, cog code
+void up();									// Forward declaration
+void down();								// Forward declaration
+volatile int 		dwell;					// dwell time in seconds, shared between cogs
 
-int main()                                 // Main function
+int main()									// Main function
 {
 	int 			down_switch;
 	int 			up_switch;
@@ -61,32 +60,32 @@ int main()                                 // Main function
 	            	exit;
 				else
 				{
-					pause(100);             // Wait 0.1 second
+					pause(100);				// Wait 0.1 second
 					timer += .1;			// increment time count
 				}			
 			}
 			up();
 		}
-		pause(100);                          // Wait 0.1 second before repeat
+		pause(100);							// Wait 0.1 second before repeat
 	}
 }
 
 /* retract ram */
 void up()
 {
-	high(_RETRACT_SOLENOID);                  // Set I/O pin high
-    pause(100);                               // Wait 1/10 second
-    low(_RETRACT_SOLENOID);                   // Set I/O pin low
-    pause(100);                               // Wait another 1/10 second
+	high(_RETRACT_SOLENOID);				// Set I/O pin high
+    pause(100);								// Wait 1/10 second
+    low(_RETRACT_SOLENOID);					// Set I/O pin low
+    pause(100);								// Wait another 1/10 second
 }
 
 /* extend ram */
 void down()
 {
-    high(_EXTEND_SOLENOID);                   // Set I/O pin high
-    pause(100);                               // Wait 1/10 second
-    low(_EXTEND_SOLENOID);                    // Set I/O pin low
-    pause(100);                               // Wait another 1/10 second
+    high(_EXTEND_SOLENOID);					// Set I/O pin high
+    pause(100);								// Wait 1/10 second
+    low(_EXTEND_SOLENOID);					// Set I/O pin low
+    pause(100);								// Wait another 1/10 second
 }
 
 /* let user set a new dwell time*/
@@ -94,7 +93,7 @@ void set_dwell()
 {
 	while(1){
 		dwell = 225;
-		ee_putInt(dwell, eeprom_addr);		  // save dwell to EEPROM 
+		ee_putInt(dwell, eeprom_addr);		// save dwell to EEPROM 
 		pause(10000);
 	}
 }
