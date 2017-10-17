@@ -14,7 +14,7 @@ void up();									// Forward declaration
 void down();								// Forward declaration
 volatile int 		dwell;					// dwell time in seconds, shared between cogs
 
-int main()									// Main function
+int main()									
 {
 	int 			down_switch;
 	int 			up_switch;
@@ -28,7 +28,8 @@ int main()									// Main function
 	dwell = ee_getInt(_EEPROM_BASE);		// read dwell from EEPROM 
 	cog_run(set_dwell, 128); 				// start cog to monitor user input                    
 	pause(1000);
-	while (1)
+	
+	while (1)								// main loop
 	{
 		kill_switch = input(_KILL_SWITCH);
 		if (kill_switch)
