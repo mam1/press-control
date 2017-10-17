@@ -10,6 +10,7 @@
 #include "press control.h"
 
 void set_dwell();                          // Forward declaration
+void save_dwell();                         // Forward declaration
 void up();                                 // Forward declaration
 void down();                               // Forward declaration
 volatile int 		dwell;				   // dwell time in seconds, shared between cogs
@@ -25,9 +26,8 @@ int main()                                 // Main function
 	pause(100);
 	printf("press control version %i.%i starting\n\n", _MAJOR_VERSION_system, _MINOR_VERSION_system);
 
-	/* start cog to monitor user input */
-	dwell = 0;
-	cog_run(set_dwell, 128);                       
+	dwell = ee_getInt(_EEPROM_BASE);		// read dwell from EEPROM 
+	cog_run(set_dwell, 128); 				// start cog to monitor user input                    
 	pause(1000);
 	while (1)
 	{
@@ -42,7 +42,6 @@ int main()                                 // Main function
 		{
 			up();
 		}
-		// down_switch = input(_DOWN_SWITCH);
 		down_switch = 1;
 		if (down_switch)
 		{
@@ -90,11 +89,18 @@ void down()
     pause(100);                               // Wait another 1/10 second
 }
 
+/* let user set a new dwell time*/
 void set_dwell()
 {
 	while(1){
 		dwell = 225;
+		ee_putInt(dwell, eeprom_addr);		  // save dwell to EEPROM 
 		pause(10000);
 	}
 }
+
+
+
+
+
 

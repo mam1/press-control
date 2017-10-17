@@ -14,4 +14,8 @@
 #define _EXTEND_SOLENOID	23
 #define _RETRACT_SOLENOID	24
 
+/* EEPROM base address */
+#define _EEPROM_BASE    	32769                        
+
+
 #endif /* PRESS_CONTROL_H_ */
