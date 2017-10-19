@@ -7,6 +7,7 @@
 */
 
 #include "simpletools.h"					// Library include
+#include <math.h>
 #include "press control.h"
 
 void set_dwell();							// Forward declaration, cog code
@@ -19,7 +20,7 @@ int main()
 	int 			down_switch;
 	int 			up_switch;
 	int 			kill_switch;
-
+	
 	struct 
 	{
 		int 	b0;
@@ -104,37 +105,22 @@ void down()
 /* let user set a new dwell time*/
 void set_dwell()
 {
-	while(1){
-		dwell = 225;
-		ee_putInt(dwell, eeprom_addr);		// save dwell to EEPROM 
-		pause(10000);
+	int 			dip_switch[8] = {_DIP_0, _DIP_1, _DIP_2, _DIP_3, _DIP_4, _DIP_5, _DIP_6, _DIP_7};
+	int 			value, i;
+	while (1)
+
+	{
+		value = 0;
+		for (i = 1, i < 9, i++)
+		{
+			if (input(dip_switch[i - 1]))
+				value += i;
+		}
+		dwell = value;
+		ee_putInt(dwell, eeprom_addr);		// save dwell to EEPROM
+		pause(1000);						// Wait 1 second
 	}
 }
-
-#include <stdio.h>
-#include <math.h>
-int convertBinaryToDecimal(long long n);
-
-int main()
-{
-    long long n;
-    printf("Enter a binary number: ");
-    scanf("%lld", &n);
-    printf("%lld in binary = %d in decimal", n, convertBinaryToDecimal(n));
-    return 0;
-}
-
-int convertBinaryToDecimal(long long n)
-{
-    int decimalNumber = 0, i = 0, remainder;
-    while (n!=0)
-    {
-        remainder = n%10;
-        n /= 10;
-        decimalNumber += remainder*pow(2,i);
-        ++i;
-    }
-    return decimalNumber;
 
 
 
