@@ -3,11 +3,10 @@
 
 	runs on a Parallax C3
 
-		 		create - mam 10/16/2017
+		 		created - mam 10/16/2017
 */
 
 #include "simpletools.h"					// Library include
-#include <math.h>
 #include "press control.h"
 
 void set_dwell();							// Forward declaration, cog code
@@ -20,53 +19,39 @@ int main()
 	int 			down_switch;
 	int 			up_switch;
 	int 			kill_switch;
-	
-	struct 
-	{
-		int 	b0;
-		int 	b1;
-		int 	b2;
-		int 	b3;
-		int 	b4;
-		int 	b5;
-		int 	b6;
-		int 	b7;
-	}
-
 	int timer;								// accumulator for dwell
 
-	pause(100);
 	printf("press control version %i.%i starting\n\n", _MAJOR_VERSION_system, _MINOR_VERSION_system);
 
 	dwell = ee_getInt(_EEPROM_BASE);		// read dwell from EEPROM 
 	cog_run(set_dwell, 128); 				// start cog to monitor user input                    
-	pause(1000);
+	pause(1000);							// wait 1 second
 
 	while (1)								// main loop
 	{
 		kill_switch = input(_KILL_SWITCH);
 		if (kill_switch)
 		{
-			up();
-			return 0;
+			up();							// retract ram
+			return 0;						// terminate program
 		}
 		up_switch = input(_UP_SWITCH);
 		if (!up_switch)
 		{
-			up();
+			up();							// retract ram
 		}
 		down_switch = input(_DOWN_SWITCH);
 		if (down_switch)
 		{
 			timer = 0;
-			down();
-			printf("dwell set to %i seconds|n",dwell);
-			while (timer < dwell)
+			down();							// extend ram
+			timer = dwell;
+			while (timer > 0)
 			{
 				kill_switch = input(_KILL_SWITCH);
 				if (kill_switch)
 				{
-					up();
+					up();					// retract ram
 					return 0;
 				}
 				up_switch = input(_UP_SWITCH);
@@ -75,10 +60,10 @@ int main()
 				else
 				{
 					pause(100);				// Wait 0.1 second
-					timer += .1;			// increment time count
+					timer -= .1;			// increment time count
 				}			
 			}
-			up();
+			up();							// retract ram
 		}
 		pause(100);							// Wait 0.1 second before repeat
 	}
@@ -102,7 +87,7 @@ void down()
     pause(100);								// Wait another 1/10 second
 }
 
-/* let user set a new dwell time*/
+/* let user set a new dwell time */
 void set_dwell()
 {
 	int 			dip_switch[8] = {_DIP_0, _DIP_1, _DIP_2, _DIP_3, _DIP_4, _DIP_5, _DIP_6, _DIP_7};
@@ -111,12 +96,12 @@ void set_dwell()
 
 	{
 		value = 0;
-		for (i = 1, i < 9, i++)
+		for (i = 1, i < 9, i++)				// convert DIP switch setting to decimal number
 		{
 			if (input(dip_switch[i - 1]))
 				value += i;
 		}
-		dwell = value;
+		dwell = value;						// set value of dwell shared between cogs
 		ee_putInt(dwell, eeprom_addr);		// save dwell to EEPROM
 		pause(1000);						// Wait 1 second
 	}
