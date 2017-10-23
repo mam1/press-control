@@ -101,7 +101,7 @@ void set_dwell()
 			if (input(dip_switch[7-i]))	// reverse pin order
 			        value += (int)pow(2, i);
 		}
-	dwell = value;						// set value of dwell shared between cogs
+	dwell = value;						// set value of dwell, shared between cogs
 	ee_putInt(dwell, _EEPROM_BASE);		// save dwell to EEPROM
 	pause(1000);						// Wait 1 second
 	}
