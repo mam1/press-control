@@ -1,2 +1,9 @@
 # press-control
-A propeller used controller for a pneumatic press
+A propeller based controller for a pneumatic press
+
+#####Paralax propeller C3
+#####Paralax relay board
+#####Power supply
+
+
+

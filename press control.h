@@ -3,7 +3,7 @@
 
 /* version */
 #define _MAJOR_VERSION_system	0
-#define _MINOR_VERSION_system	0
+#define _MINOR_VERSION_system	1
 
 /* switch pins */
 #define _DOWN_SWITCH		20
@@ -26,6 +26,5 @@
 
 /* EEPROM base address */
 #define _EEPROM_BASE    	32769                        
-
 
 #endif /* PRESS_CONTROL_H_ */
