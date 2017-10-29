@@ -66,7 +66,8 @@ int main()
 			}
 			up();							// retract ram
 		}
-		pause(100);							// Wait 0.1 second before repeat
+		pause(1000);							// Wait 0.1 second before repeat
+    printf("dwell -> %i\r",dwell);
 	}
 }
 
