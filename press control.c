@@ -92,14 +92,16 @@ void down()
 /* let user set a new dwell time */
 void set_dwell()
 {
-	int 			dip_switch[8]; 		//= {_DIP_0, _DIP_1, _DIP_2, _DIP_3, _DIP_4, _DIP_5, _DIP_6, _DIP_7};
+	int 			dip_switch[8] = {_DIP_0, _DIP_1, _DIP_2, _DIP_3, _DIP_4, _DIP_5, _DIP_6, _DIP_7};
 	int 			value, i;
+
 	while (1)
 	{
 		value = 0;
 		for (i=0;i<8;i++)				// convert DIP switch setting to decimal number
 		{
-			if (input(dip_switch[7-i]))	// reverse pin order
+   		if (input(dip_switch[i]))	// reverse pin order
+
 			        value += (int)pow(2, i);
 		}
 	dwell = value;						// set value of dwell, shared between cogs

@@ -6,23 +6,23 @@
 #define _MINOR_VERSION_system	1
 
 /* switch pins */
-#define _DOWN_SWITCH		20
-#define _UP_SWITCH			21
-#define _KILL_SWITCH		22
+#define _DOWN_SWITCH		10
+#define _UP_SWITCH			11
+#define _KILL_SWITCH		12
 
 /* solenoid control pins */
-#define _EXTEND_SOLENOID	23
-#define _RETRACT_SOLENOID	24
+#define _EXTEND_SOLENOID	0
+#define _RETRACT_SOLENOID	1
 
 /* DIP switch pins */
-#define _DIP_0
-#define _DIP_1
-#define _DIP_2
-#define _DIP_3
-#define _DIP_4
-#define _DIP_5
-#define _DIP_6
-#define _DIP_7
+#define _DIP_0				2
+#define _DIP_1				3
+#define _DIP_2				4
+#define _DIP_3				5
+#define _DIP_4				6
+#define _DIP_5				7
+#define _DIP_6				8
+#define _DIP_7				9
 
 /* EEPROM base address */
 #define _EEPROM_BASE    	32769                        
