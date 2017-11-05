@@ -2,13 +2,13 @@
 #define PRESS_CONTROL_H_
 
 /* version */
-#define _MAJOR_VERSION_system	0
-#define _MINOR_VERSION_system	1
+#define _MAJOR_VERSION_system	1
+#define _MINOR_VERSION_system	0
 
 /* switch pins */
-#define _DOWN_SWITCH		10
-#define _UP_SWITCH			11
-#define _KILL_SWITCH		12
+#define _DOWN_SWITCH		18
+#define _UP_SWITCH			17
+#define _KILL_SWITCH		16
 
 /* solenoid control pins */
 #define _EXTEND_SOLENOID	0
@@ -24,7 +24,12 @@
 #define _DIP_6				8
 #define _DIP_7				9
 
-/* EEPROM base address */
-#define _EEPROM_BASE    	32769                        
+/* ram control  */
+void up(void);
+void down(void);  
+
+/* cogs */
+void set_dwell();							// Forward declaration, cog code
+void watch_switches();						// Forward declaration, cog code                  
 
 #endif /* PRESS_CONTROL_H_ */
