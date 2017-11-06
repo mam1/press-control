@@ -2,7 +2,7 @@
 #define PRESS_CONTROL_H_
 
 /* version */
-#define _MAJOR_VERSION_system	1
+#define _MAJOR_VERSION_system	2
 #define _MINOR_VERSION_system	0
 
 /* switch pins */
