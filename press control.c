@@ -57,7 +57,7 @@ void up()
 /* extend ram */
 void down()
 {
-	printf("--->> ram extend\n");
+	printf("--->> ram extend dwell %i\n", dwell);
 	high(_EXTEND_SOLENOID);					// Set I/O pin high
 	pause(1000);								// Wait 1/10 second
 	low(_EXTEND_SOLENOID);					// Set I/O pin low
