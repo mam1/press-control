@@ -13,21 +13,23 @@
 /* shared memory */
 volatile int 		dwell;					// dwell time in seconds, shared between cogs
 volatile int 		ram_state;				// 0-RETRACTED, 1-EXTENDED
-volatile int 		up_switch;				// switch state, shared between cogs
-volatile int 		down_switch;			// switch state, shared between cogs
 
 int main()
 {
 	int timer;								// accumulator for dwell
+	int 		down_switch;			// switch state
 
+/* initializations */
 	pause(200);								// wait 1 second
 	printf("press control version %i.%i starting\n\n", _MAJOR_VERSION_system, _MINOR_VERSION_system);
 	up();
 	printf("start switch monitor cog\n");
-	cog_run(watch_switches, 128);     		// start cog to monitor swiwtch input
+	cog_run(watch_up_switch, 128);     		// start cog to monitor swiwtch input
 	printf("start dewll monitor cog\n");
 	cog_run(set_dwell, 128);     			// start cog to monitor DIP input
-	while (1)								// main loop wait for an extend command
+
+/* main loop - watch down switch */
+	while (1)								// wait for an extend command
 	{
 		down_switch = input(_DOWN_SWITCH);
 		if (!down_switch)					// test switch
@@ -70,8 +72,9 @@ void down()
 }
 
 /* watch switches */
-void watch_switches(void)
+void watch_up_switch(void)
 {
+	int 		up_switch;				// switch state
 	while (1)
 	{
 		up_switch = input(_UP_SWITCH);

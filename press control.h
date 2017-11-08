@@ -30,7 +30,7 @@ void down(void);
 
 /* cogs */
 void set_dwell();							// Forward declaration, cog code
-void watch_switches();						// Forward declaration, cog code   
+void watch_up_switch();						// Forward declaration, cog code   
 
 /* miscelianous */
 #define _EXTENDED 			1
