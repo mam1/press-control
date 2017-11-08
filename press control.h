@@ -2,13 +2,12 @@
 #define PRESS_CONTROL_H_
 
 /* version */
-#define _MAJOR_VERSION_system	3
-#define _MINOR_VERSION_system	1
+#define _MAJOR_VERSION_system	4
+#define _MINOR_VERSION_system	0
 
 /* switch pins */
 #define _DOWN_SWITCH		17
 #define _UP_SWITCH			18
-#define _KILL_SWITCH		16
 
 /* solenoid control pins */
 #define _EXTEND_SOLENOID	0

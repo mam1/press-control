@@ -32,7 +32,7 @@ int main()
 	while (1)								// wait for an extend command
 	{
 		down_switch = input(_DOWN_SWITCH);
-		if (!down_switch)					// test switch
+		if (down_switch)					// test switch
 		{
 			timer = dwell;
 			down();							// extend ram
@@ -78,7 +78,7 @@ void watch_up_switch(void)
 	while (1)
 	{
 		up_switch = input(_UP_SWITCH);
-		if (!up_switch)
+		if (up_switch)
 			if (ram_state == _EXTENDED)
 				up();
 		pause(100);						// Wait .1 second
@@ -96,10 +96,10 @@ void set_dwell(void)
 		value = 0;
 		for (i = 0; i < 8; i++)				// convert DIP switch setting to decimal number
 		{
-			if (!input(dip_switch[i]))	
+			if (input(dip_switch[i]))	
 				value += (int)pow(2, i);
 		}
-		dwell = 70;  // value * 10;						// set value of dwell, shared between cogs
+		dwell = value * 10;						// set value of dwell, shared between cogs
 		pause(100);						// Wait .1 second
 	}
 }
