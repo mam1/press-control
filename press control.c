@@ -12,7 +12,7 @@
 
 /* shared memory */
 volatile int 		dwell;					// dwell time in seconds, shared between cogs
-// volatile int 		kill_switch ;			// switch state, shared between cogs
+volatile int 		ram_state;				// 0-RETRACTED, 1-EXTENDED
 volatile int 		up_switch;				// switch state, shared between cogs
 volatile int 		down_switch;			// switch state, shared between cogs
 
@@ -20,24 +20,27 @@ int main()
 {
 	int timer;								// accumulator for dwell
 
-	pause(100);							// wait 1 second
-	printf("press control version %i.%i starting\n\n", _MAJOR_VERSION_system, _MINOR_VERSION_system);;
+	pause(200);								// wait 1 second
+	printf("press control version %i.%i starting\n\n", _MAJOR_VERSION_system, _MINOR_VERSION_system);
+	up();
 	printf("start switch monitor cog\n");
 	cog_run(watch_switches, 128);     		// start cog to monitor swiwtch input
 	printf("start dewll monitor cog\n");
 	cog_run(set_dwell, 128);     			// start cog to monitor DIP input
-	while (1)								// main loop
+	while (1)								// main loop wait for an extend command
 	{
+		down_switch = input(_DOWN_SWITCH);
 		if (!down_switch)					// test switch
 		{
-			down();							// extend ram
 			timer = dwell;
-			while (timer > 0)
+			down();							// extend ram
+			while ((timer >= 0) & (ram_state == _EXTENDED))
 			{
 				pause(100);				// Wait 0.1 second
-				timer -= .1;			// increment time count
+				timer -= 1;			// decrement time count
 			}
-			up();							// retract ram
+			if(ram_state == _EXTENDED)
+				up();							// retract ram
 			pause(100);
 		}
 		pause(100);							// Wait 0.1 second before repeat
@@ -49,8 +52,9 @@ void up()
 {
 	printf("<<--- ram retract\n");
 	high(_RETRACT_SOLENOID);				// Set I/O pin high
-	pause(1000);								 // Wait 1/10 second
+	pause(100);								 // Wait 1/10 second
 	low(_RETRACT_SOLENOID);					// Set I/O pin low
+	ram_state = _RETRACTED;
 	return;
 }
 
@@ -59,8 +63,9 @@ void down()
 {
 	printf("--->> ram extend dwell %i\n", dwell);
 	high(_EXTEND_SOLENOID);					// Set I/O pin high
-	pause(1000);								// Wait 1/10 second
+	pause(100);								// Wait 1/10 second
 	low(_EXTEND_SOLENOID);					// Set I/O pin low
+	ram_state = _EXTENDED;
 	return;
 }
 
@@ -71,13 +76,8 @@ void watch_switches(void)
 	{
 		up_switch = input(_UP_SWITCH);
 		if (!up_switch)
-		{
-			high(_RETRACT_SOLENOID);		    // Set I/O pin high
-			pause(1000);						         // Wait 1/10 second
-			low(_RETRACT_SOLENOID);				  // Set I/O pin low;
-			pause(1000);						         // Wait 1/10 second
-		}
-		down_switch = input(_DOWN_SWITCH);
+			if (ram_state == _EXTENDED)
+				up();
 		pause(100);						// Wait .1 second
 	}
 }
@@ -93,10 +93,10 @@ void set_dwell(void)
 		value = 0;
 		for (i = 0; i < 8; i++)				// convert DIP switch setting to decimal number
 		{
-			if (!input(dip_switch[i]))	// reverse pin order
+			if (!input(dip_switch[i]))	
 				value += (int)pow(2, i);
 		}
-		dwell = value;						// set value of dwell, shared between cogs
+		dwell = 70;  // value * 10;						// set value of dwell, shared between cogs
 		pause(100);						// Wait .1 second
 	}
 }

@@ -2,8 +2,8 @@
 #define PRESS_CONTROL_H_
 
 /* version */
-#define _MAJOR_VERSION_system	2
-#define _MINOR_VERSION_system	0
+#define _MAJOR_VERSION_system	3
+#define _MINOR_VERSION_system	1
 
 /* switch pins */
 #define _DOWN_SWITCH		18
@@ -30,6 +30,10 @@ void down(void);
 
 /* cogs */
 void set_dwell();							// Forward declaration, cog code
-void watch_switches();						// Forward declaration, cog code                  
+void watch_switches();						// Forward declaration, cog code   
+
+/* miscelianous */
+#define _EXTENDED 			1
+#define _RETRACTED 			0              
 
 #endif /* PRESS_CONTROL_H_ */
