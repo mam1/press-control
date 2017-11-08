@@ -3,12 +3,12 @@
 
 	runs on a Parallax C3
 
-		 		created - mam 10/16/2017
+		 		10/16/2017 - created mam 
+		 		11/8/2017 - v-4.0 installed 
 */
 
 #include "simpletools.h"					// Library include
 #include "press control.h"
-
 
 /* shared memory */
 volatile int 		dwell;					// dwell time in seconds, shared between cogs
@@ -17,7 +17,7 @@ volatile int 		ram_state;				// 0-RETRACTED, 1-EXTENDED
 int main()
 {
 	int timer;								// accumulator for dwell
-	int 		down_switch;			// switch state
+	int 		down_switch;				// switch state
 
 /* initializations */
 	pause(200);								// wait 1 second
@@ -38,11 +38,11 @@ int main()
 			down();							// extend ram
 			while ((timer >= 0) & (ram_state == _EXTENDED))
 			{
-				pause(100);				// Wait 0.1 second
-				timer -= 1;			// decrement time count
+				pause(100);					// Wait 0.1 second
+				timer -= 1;					// decrement time count
 			}
 			if(ram_state == _EXTENDED)
-				up();							// retract ram
+				up();						// retract ram
 			pause(100);
 		}
 		pause(100);							// Wait 0.1 second before repeat
@@ -54,7 +54,7 @@ void up()
 {
 	printf("<<--- ram retract\n");
 	high(_RETRACT_SOLENOID);				// Set I/O pin high
-	pause(100);								 // Wait 1/10 second
+	pause(100);								// Wait 1/10 second
 	low(_RETRACT_SOLENOID);					// Set I/O pin low
 	ram_state = _RETRACTED;
 	return;
@@ -74,14 +74,14 @@ void down()
 /* watch switches */
 void watch_up_switch(void)
 {
-	int 		up_switch;				// switch state
+	int 		up_switch;					// switch state
 	while (1)
 	{
 		up_switch = input(_UP_SWITCH);
 		if (up_switch)
 			if (ram_state == _EXTENDED)
 				up();
-		pause(100);						// Wait .1 second
+		pause(100);							// Wait .1 second
 	}
 }
 
@@ -99,8 +99,8 @@ void set_dwell(void)
 			if (input(dip_switch[i]))	
 				value += (int)pow(2, i);
 		}
-		dwell = value * 10;						// set value of dwell, shared between cogs
-		pause(100);						// Wait .1 second
+		dwell = value * 10;					// dwell in .1 seconds
+		pause(100);							// Wait .1 second
 	}
 }
 
