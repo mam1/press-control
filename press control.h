@@ -6,8 +6,8 @@
 #define _MINOR_VERSION_system	1
 
 /* switch pins */
-#define _DOWN_SWITCH		18
-#define _UP_SWITCH			17
+#define _DOWN_SWITCH		17
+#define _UP_SWITCH			18
 #define _KILL_SWITCH		16
 
 /* solenoid control pins */
