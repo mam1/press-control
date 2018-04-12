@@ -129,8 +129,13 @@ void set_dwell(void)
 		value = 0;
 		for (i = 0; i < 8; i++)				// convert DIP switch setting to decimal number
 		{
-			if (input(tswitch[i]))	
+			if (input(tswitch[i]))
+			{	
 				value += (int)pow(2, i);
+				high(led[i]);
+			}
+			else
+				low(led[low]);
 		}
 		dwell = value * 10;					// dwell in .1 seconds
 		pause(100);							// Wait .1 second
