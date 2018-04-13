@@ -6,8 +6,8 @@
 #define _MINOR_VERSION_system	0
 
 /* foot switch pins */
-#define _DOWN_SWITCH		27
-#define _UP_SWITCH			28
+#define _DOWN_SWITCH		30
+#define _UP_SWITCH			31
 
 /* solenoid control pins */
 #define _EXTEND_SOLENOID	0

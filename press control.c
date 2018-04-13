@@ -35,19 +35,20 @@ int main()
 	while (1)								// wait for an extend command
 	{
 		down_switch = input(_DOWN_SWITCH);
-		if (down_switch)					// test switch
-		{
-			timer = dwell;
-			down();							// extend ram
-			while ((timer >= 0) & (ram_state == _EXTENDED))
-			{
-				pause(100);					// Wait 0.1 second
-				timer -= 1;					// decrement time count
-			}
-			if(ram_state == _EXTENDED)
-				up();						// retract ram
-			pause(100);
-		}
+		printf("down switch is pushed\n");
+		// if (down_switch)					// test switch
+		// {
+		// 	timer = dwell;
+		// 	down();							// extend ram
+		// 	while ((timer >= 0) & (ram_state == _EXTENDED))
+		// 	{
+		// 		pause(100);					// Wait 0.1 second
+		// 		timer -= 1;					// decrement time count
+		// 	}
+		// 	if(ram_state == _EXTENDED)
+		// 		up();						// retract ram
+		// 	pause(100);
+		// }
 		pause(100);							// Wait 0.1 second before repeat
 	}
 }
@@ -94,16 +95,35 @@ void cycle()
 		pause(100);
 		for (ii=0;ii<8;ii++)
 		{
-			if(ii>0) low(led[ii-1]);
-			else low(led[8]);
+			if(ii>6) low(led[ii+1]);
+			else low(led[ii]);
+
+			high(led[ii]);
+			pause(100);
+		}
+		for (ii=7;ii>0;ii--)
+		{
+			if(ii>0) low(led[ii]);
+			else low(led[ii+1]);
+
 			high(led[ii]);
 			pause(100);
 		}
 		pause(100);
+				for (ii=0;ii<8;ii++) low(led[ii]);
+		pause(100);
+		for (ii=0;ii<8;ii++) high(led[ii]);
+			pause(100);
+		for (ii=0;ii<8;ii++) low(led[ii]);
+		pause(100);
+		for (ii=0;ii<8;ii++) high(led[ii]);
+			pause(100);
+		for (ii=0;ii<8;ii++) low(led[ii]);
 	}
 	return;
 }
 
+/********************  Cog code *************************************/
 /* watch switches */
 void watch_up_switch(void)
 {
@@ -122,7 +142,7 @@ void watch_up_switch(void)
 void set_dwell(void)
 {
 	int 			tswitch[8] = {_DIP_0, _DIP_1, _DIP_2, _DIP_3, _DIP_4, _DIP_5, _DIP_6, _DIP_7};
- 	int 	    led[8] = {_LED_1, _LED_2, _LED_3, _LED_4, _LED_5, _LED_6, _LED_7, _LED_8};
+ 	int 	    	sled[8] = {_LED_1, _LED_2, _LED_3, _LED_4, _LED_5, _LED_6, _LED_7, _LED_8};
 
 	int 			value, i;
 
