@@ -80,19 +80,19 @@ void cycle()
 	int 	led[8] = {_LED_1, _LED_2, _LED_3, _LED_4, _LED_5, _LED_6, _LED_7, _LED_8};
 	int 	i, ii;
 
-	for (i=0,i<3,i++)
+	for (i=0;i<3;i++)
 	{
-		for (ii=0,ii<8,ii++) low(led[ii]);
+		for (ii=0;ii<8;ii++) low(led[ii]);
 		pause(100);
-		for (ii=0,ii<8,ii++) high(led[ii]);
+		for (ii=0;ii<8;ii++) high(led[ii]);
 			pause(100);
-		for (ii=0,ii<8,ii++) low(led[ii]);
+		for (ii=0;ii<8;ii++) low(led[ii]);
 		pause(100);
-		for (ii=0,ii<8,ii++) high(led[ii]);
+		for (ii=0;ii<8;ii++) high(led[ii]);
 			pause(100);
-		for (ii=0,ii<8,ii++) low(led[ii]);
+		for (ii=0;ii<8;ii++) low(led[ii]);
 		pause(100);
-		for (ii=0,ii<8,ii++)
+		for (ii=0;ii<8;ii++)
 		{
 			if(ii>0) low(led[ii-1]);
 			else low(led[8]);
@@ -122,6 +122,8 @@ void watch_up_switch(void)
 void set_dwell(void)
 {
 	int 			tswitch[8] = {_DIP_0, _DIP_1, _DIP_2, _DIP_3, _DIP_4, _DIP_5, _DIP_6, _DIP_7};
+ 	int 	    led[8] = {_LED_1, _LED_2, _LED_3, _LED_4, _LED_5, _LED_6, _LED_7, _LED_8};
+
 	int 			value, i;
 
 	while (1)
@@ -135,7 +137,7 @@ void set_dwell(void)
 				high(led[i]);
 			}
 			else
-				low(led[low]);
+				low(led[i]);
 		}
 		dwell = value * 10;					// dwell in .1 seconds
 		pause(100);							// Wait .1 second
