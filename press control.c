@@ -22,33 +22,34 @@ int main()
 /* initializations */
 	pause(200);								// wait 1 second
 	high(_STATUS_LED_BUS_MUX);				// free up vga io pins */
-
+  dwell = 30;
 	printf("press control version %i.%i starting\n\n", _MAJOR_VERSION_system, _MINOR_VERSION_system);
-	up();									// retract ram
 	cycle();								// flash leds
 	printf("start switch monitor cog\n");
 	cog_run(watch_up_switch, 128);     		// start cog to monitor swiwtch input
 	printf("start dewll monitor cog\n");
 	cog_run(set_dwell, 128);     			// start cog to monitor DIP input
+  pause(200);
+  	up();									// retract ram   
 
 /* main loop - watch down switch */
 	while (1)								// wait for an extend command
 	{
 		down_switch = input(_DOWN_SWITCH);
-		printf("down switch is pushed\n");
-		// if (down_switch)					// test switch
-		// {
-		// 	timer = dwell;
-		// 	down();							// extend ram
-		// 	while ((timer >= 0) & (ram_state == _EXTENDED))
-		// 	{
-		// 		pause(100);					// Wait 0.1 second
-		// 		timer -= 1;					// decrement time count
-		// 	}
-		// 	if(ram_state == _EXTENDED)
-		// 		up();						// retract ram
-		// 	pause(100);
-		// }
+		if(down_switch) printf("down switch is pushed\n");
+		if (down_switch)					// test switch
+		{
+			timer = dwell;
+			down();							// extend ram
+			while ((timer >= 0) & (ram_state == _EXTENDED))
+			{
+				pause(100);					// Wait 0.1 second
+				timer -= 1;					// decrement time count
+			}
+			if(ram_state == _EXTENDED)
+				up();						// retract ram
+			pause(100);
+		}
 		pause(100);							// Wait 0.1 second before repeat
 	}
 }
@@ -142,7 +143,7 @@ void watch_up_switch(void)
 void set_dwell(void)
 {
 	int 			tswitch[8] = {_DIP_0, _DIP_1, _DIP_2, _DIP_3, _DIP_4, _DIP_5, _DIP_6, _DIP_7};
- 	int 	    	sled[8] = {_LED_1, _LED_2, _LED_3, _LED_4, _LED_5, _LED_6, _LED_7, _LED_8};
+ 	int 	    	led[8] = {_LED_1, _LED_2, _LED_3, _LED_4, _LED_5, _LED_6, _LED_7, _LED_8};
 
 	int 			value, i;
 
