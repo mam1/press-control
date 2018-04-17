@@ -22,14 +22,13 @@ int main()
 /* initializations */
 	pause(200);								// wait 1 second
 	high(_STATUS_LED_BUS_MUX);				// free up vga io pins */
-  dwell = 30;
 	printf("press control version %i.%i starting\n\n", _MAJOR_VERSION_system, _MINOR_VERSION_system);
 	cycle();								// flash leds
-	printf("start switch monitor cog\n");
-	cog_run(watch_up_switch, 128);     		// start cog to monitor swiwtch input
 	printf("start dewll monitor cog\n");
 	cog_run(set_dwell, 128);     			// start cog to monitor DIP input
-  pause(200);
+	printf("start switch monitor cog\n");
+	cog_run(watch_up_switch, 128);     		// start cog to monitor swiwtch input
+ 	pause(200);
   	up();									// retract ram   
 
 /* main loop - watch down switch */
@@ -76,53 +75,6 @@ void down()
 	return;
 }
 
-/* cycle lights */
-void cycle()
-{
-	int 	led[8] = {_LED_1, _LED_2, _LED_3, _LED_4, _LED_5, _LED_6, _LED_7, _LED_8};
-	int 	i, ii;
-
-	for (i=0;i<3;i++)
-	{
-		for (ii=0;ii<8;ii++) low(led[ii]);
-		pause(100);
-		for (ii=0;ii<8;ii++) high(led[ii]);
-			pause(100);
-		for (ii=0;ii<8;ii++) low(led[ii]);
-		pause(100);
-		for (ii=0;ii<8;ii++) high(led[ii]);
-			pause(100);
-		for (ii=0;ii<8;ii++) low(led[ii]);
-		pause(100);
-		for (ii=0;ii<8;ii++)
-		{
-			if(ii>6) low(led[ii+1]);
-			else low(led[ii]);
-
-			high(led[ii]);
-			pause(100);
-		}
-		for (ii=7;ii>0;ii--)
-		{
-			if(ii>0) low(led[ii]);
-			else low(led[ii+1]);
-
-			high(led[ii]);
-			pause(100);
-		}
-		pause(100);
-				for (ii=0;ii<8;ii++) low(led[ii]);
-		pause(100);
-		for (ii=0;ii<8;ii++) high(led[ii]);
-			pause(100);
-		for (ii=0;ii<8;ii++) low(led[ii]);
-		pause(100);
-		for (ii=0;ii<8;ii++) high(led[ii]);
-			pause(100);
-		for (ii=0;ii<8;ii++) low(led[ii]);
-	}
-	return;
-}
 
 /********************  Cog code *************************************/
 /* watch switches */
@@ -143,8 +95,6 @@ void watch_up_switch(void)
 void set_dwell(void)
 {
 	int 			tswitch[8] = {_DIP_0, _DIP_1, _DIP_2, _DIP_3, _DIP_4, _DIP_5, _DIP_6, _DIP_7};
- 	int 	    	led[8] = {_LED_1, _LED_2, _LED_3, _LED_4, _LED_5, _LED_6, _LED_7, _LED_8};
-
 	int 			value, i;
 
 	while (1)
@@ -152,13 +102,8 @@ void set_dwell(void)
 		value = 0;
 		for (i = 0; i < 8; i++)				// convert DIP switch setting to decimal number
 		{
-			if (input(tswitch[i]))
-			{	
-				value += (int)pow(2, i);
-				high(led[i]);
-			}
-			else
-				low(led[i]);
+			if (input(tswitch[i]))	
+				value += (int)pow(2, i);				
 		}
 		dwell = value * 10;					// dwell in .1 seconds
 		pause(100);							// Wait .1 second
