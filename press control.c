@@ -23,9 +23,8 @@ int main()
 	pause(200);								// wait 1 second
 	high(_STATUS_LED_BUS_MUX);				// free up vga io pins */
 	printf("press control version %i.%i starting\n\n", _MAJOR_VERSION_system, _MINOR_VERSION_system);
-	cycle();								// flash leds
 	printf("start dewll monitor cog\n");
-	cog_run(set_dwell, 128);     			// start cog to monitor DIP input
+	cog_run(set_dwell, 128);     			// start cog to monitor dwell input
 	printf("start switch monitor cog\n");
 	cog_run(watch_up_switch, 128);     		// start cog to monitor swiwtch input
  	pause(200);
@@ -58,7 +57,7 @@ void up()
 {
 	printf("<<--- ram retract\n");
 	high(_RETRACT_SOLENOID);				// Set I/O pin high
-	pause(100);								// Wait 1/10 second
+	pause(_SPLUSE);								// Wait
 	low(_RETRACT_SOLENOID);					// Set I/O pin low
 	ram_state = _RETRACTED;
 	return;
@@ -69,7 +68,7 @@ void down()
 {
 	printf("--->> ram extend dwell %i\n", dwell);
 	high(_EXTEND_SOLENOID);					// Set I/O pin high
-	pause(100);								// Wait 1/10 second
+	pause(_SPLUSE);								// 
 	low(_EXTEND_SOLENOID);					// Set I/O pin low
 	ram_state = _EXTENDED;
 	return;
