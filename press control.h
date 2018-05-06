@@ -12,6 +12,7 @@
 /* solenoid control pins */
 #define _EXTEND_SOLENOID	18
 #define _RETRACT_SOLENOID	19
+#define _SPLUSE				100
 
 /* switch pins */
 #define _DIP_0				17
