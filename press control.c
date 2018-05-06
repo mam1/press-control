@@ -22,15 +22,16 @@ int main()
 	int timer;								// accumulator for dwell
 	int 		down_switch;				// switch state
 
-/* initializations */ 1
+/* initializations */ 
 	high(_STATUS_LED_BUS_MUX);				// free up vga io pins */
 	up();									// retract ram
 	printf("press control version %i.%i starting\n\n", _MAJOR_VERSION_system, _MINOR_VERSION_system);
 	printf("start dwell monitor cog\n");
-	cog_run(set_dwell, 128);     			// start cog to monitor dwell setting switches
+	cog_run(set_dwell, 128);
+	pause(100);				     			// start cog to monitor dwell setting switches
+	printf("dwell set to %d seconds\n", dwell);
 	printf("start switch monitor cog\n");
 	cog_run(watch_up_switch, 128);     		// start cog to monitor foot switch input
- 	pause(100);
    
 /* main loop - watch down switch */
 	while (1)								// wait for an extend command
@@ -55,7 +56,7 @@ int main()
 void up()
 {
 	high(_RETRACT_SOLENOID);				// Set I/O pin high
-	pause(_SPLUSE);								// Wait
+	pause(_SPLUSE);							// Wait
 	low(_RETRACT_SOLENOID);					// Set I/O pin low
 	return;
 }
@@ -64,7 +65,7 @@ void up()
 void down()
 {
 	high(_EXTEND_SOLENOID);					// Set I/O pin high
-	pause(_SPLUSE);								// 
+	pause(_SPLUSE);							// wait
 	low(_EXTEND_SOLENOID);					// Set I/O pin low
 	return;
 }
@@ -80,7 +81,7 @@ void watch_up_switch(void)
 		if (up_switch)
 			if (ram_state == _EXTENDED)
 				up();
-		pause(10);							// 
+		pause(10);							// wait
 	}
 }
 
