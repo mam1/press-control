@@ -37,7 +37,7 @@ int main()
 	while (1)								// wait for an extend command
 	{
 		down_switch = input(_DOWN_SWITCH);  // check down switch
-		else if (down_switch)				// test switch
+		if (down_switch)				// test switch
 		{
 			timer = dwell;
 			down();							// extend ram
