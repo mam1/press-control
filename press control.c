@@ -26,13 +26,8 @@ int main()
 	high(_STATUS_LED_BUS_MUX);				// free up vga io pins */
 	up();									// retract ram
 	printf("press control version %i.%i starting\n\n", _MAJOR_VERSION_system, _MINOR_VERSION_system);
-<<<<<<< HEAD
 	printf("start dwell monitor cog\n");
 	cog_run(set_dwell, 128);     			// start cog to monitor dwell setting switches
-=======
-	printf("start dewll monitor cog\n");
-	cog_run(set_dwell, 128);     			// start cog to monitor dwell input
->>>>>>> 6e26b9771dc2caa2625c116f5235aa0c7e87c420
 	printf("start switch monitor cog\n");
 	cog_run(watch_up_switch, 128);     		// start cog to monitor foot switch input
  	pause(100);
@@ -59,15 +54,8 @@ int main()
 /* retract ram */
 void up()
 {
-<<<<<<< HEAD
-	high(_RETRACT_SOLENOID);
-	ram_state = _RETRACTED;					// Set I/O pin high
-	pause(100);								// Wait
-=======
-	printf("<<--- ram retract\n");
 	high(_RETRACT_SOLENOID);				// Set I/O pin high
 	pause(_SPLUSE);								// Wait
->>>>>>> 6e26b9771dc2caa2625c116f5235aa0c7e87c420
 	low(_RETRACT_SOLENOID);					// Set I/O pin low
 	return;
 }
