@@ -6,7 +6,7 @@
 		 		10/16/2017 	- created mam 
 		 		11/8/2017 	- v-4.0 installed 
 		 		5/6/2018 	- v-6.0 removed pauses where possible
-		 							leds controlled directly by switches
+		 							          leds controlled directly by switches
 
 */
 
@@ -81,7 +81,7 @@ void watch_up_switch(void)
 		if (up_switch)
 			if (ram_state == _EXTENDED)
 				up();
-		pause(10);							// wait
+		pause(100);							// wait
 	}
 }
 
