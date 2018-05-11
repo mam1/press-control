@@ -14,8 +14,8 @@
 #include "press control.h"
 
 /* shared memory */
-volatile int 		dwell;					// dwell time in seconds, shared between cogs
-volatile int 		ram_state;				// 0-RETRACTED, 1-EXTENDED
+volatile int 		dwell;					// dwell time, shared between cogs
+volatile int 		ram_state;			// 0-RETRACTED, 1-EXTENDED
 
 int main()
 {
@@ -24,7 +24,8 @@ int main()
 
 /* initializations */ 
 	high(_STATUS_LED_BUS_MUX);				// free up vga io pins */
-	up();									// retract ram
+	up();
+	pause(100);									// retract ram
 	printf("press control version %i.%i starting\n\n", _MAJOR_VERSION_system, _MINOR_VERSION_system);
 	printf("start dwell monitor cog\n");
 	cog_run(set_dwell, 128);
@@ -58,7 +59,7 @@ void up()
 	high(_RETRACT_SOLENOID);				// Set I/O pin high
 	pause(_SPLUSE);							// Wait
 	low(_RETRACT_SOLENOID);					// Set I/O pin low
-	return;
+	ram_state = _RETRACTED;
 }
 
 /* extend ram */
@@ -67,6 +68,7 @@ void down()
 	high(_EXTEND_SOLENOID);					// Set I/O pin high
 	pause(_SPLUSE);							// wait
 	low(_EXTEND_SOLENOID);					// Set I/O pin low
+	ram_state = _EXTENDED;					
 	return;
 }
 
@@ -79,9 +81,8 @@ void watch_up_switch(void)
 	{
 		up_switch = input(_UP_SWITCH);
 		if (up_switch)
-			if (ram_state == _EXTENDED)
-				up();
-		pause(10);							// wait
+			up();
+		pause(1000);						// wait
 	}
 }
 

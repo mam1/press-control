@@ -24,29 +24,16 @@
 #define _DIP_6				3
 #define _DIP_7				2
 
-// /* LED pins */
-// #define _LED_1				16
-// #define _LED_2				17
-// #define _LED_3				18
-// #define _LED_4				19
-// #define _LED_5				20
-// #define _LED_6				21
-// #define _LED_7				22
-// #define _LED_8				23
-
 /* VGA disable pin */
-#define _STATUS_LED_BUS_MUX		15
-
-/* cycle leds */
-void cycle(void);
+#define _STATUS_LED_BUS_MUX	15
 
 /* ram control  */
 void up(void);
 void down(void);  
 
 /* cogs */
-void set_dwell();							// Forward declaration, cog code
-void watch_up_switch();						// Forward declaration, cog code   
+void set_dwell();					// Forward declaration, cog code
+void watch_up_switch();				// Forward declaration, cog code   
 
 /* miscelianous */
 #define _EXTENDED 			1
