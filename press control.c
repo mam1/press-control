@@ -6,7 +6,7 @@
 		 		10/16/2017 	- created mam 
 		 		11/8/2017 	- v-4.0 installed 
 		 		5/6/2018 	- v-6.0 removed pauses where possible
-		 							leds controlled directly by switches
+		 							          leds controlled directly by switches
 
 */
 
