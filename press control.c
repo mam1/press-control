@@ -7,6 +7,7 @@
 		 		11/8/2017 	- v-4.0 installed 
 		 		5/6/2018 	- v-6.0 removed pauses where possible
 		 							          leds controlled directly by switches
+          5/11/2018 - v-6.1 improve response to up swithch
 
 */
 
@@ -15,7 +16,7 @@
 
 /* shared memory */
 volatile int 		dwell;					// dwell time, shared between cogs
-volatile int 		ram_state;			// 0-RETRACTED, 1-EXTENDED
+volatile int 		ram_state;				// 0-RETRACTED, 1-EXTENDED
 
 int main()
 {
@@ -47,7 +48,7 @@ int main()
 				pause(1);					// Wait 1 ms
 				timer -= 1;					// decrement time count
 			}
-			if(ram_state == _EXTENDED)
+			// if(ram_state == _EXTENDED)
 				up();						// retract ram
 		}
 	}
@@ -82,7 +83,7 @@ void watch_up_switch(void)
 		up_switch = input(_UP_SWITCH);
 		if (up_switch)
 			up();
-		pause(1000);						// wait
+		pause(10);						// wait
 	}
 }
 
