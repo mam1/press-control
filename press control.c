@@ -15,8 +15,9 @@
 #include "press control.h"
 
 /* shared memory */
-volatile int 		dwell;				// dwell time, shared between cogs
-volatile int 		ram_state;	// 0-RETRACTED, 1-EXTENDED
+static volatile int 		dwell;				// dwell time, shared between cogs
+static volatile int 		ram_state;	// 0-RETRACTED, 1-EXTENDED
+static volatile int   lock_dwell, lock_ram_state;
 
 int main()
 {
@@ -28,6 +29,8 @@ int main()
 /* initializations */ 
 	high(_STATUS_LED_BUS_MUX);	// free up vga io pins */
 	up();									     // retract ram
+  lock_dwell = 0;
+  lock_ram_state = 0;
 	pause(100);									
 	printf("press control version %i.%i starting\n\n", _MAJOR_VERSION_system, _MINOR_VERSION_system);
 	printf("start dwell monitor cog\n");
@@ -35,25 +38,29 @@ int main()
 	pause(100);				     			// start cog to monitor dwell setting switches
 	printf("dwell set to %d seconds\n", dwell);
 	printf("start switch monitor cog\n");
-	cog2 = cog_run(watch_up_switch, 128);     		// start cog to monitor foot switch input
+	cog2 = cog_run(watch_up_switch, 128);   // start cog to monitor up switch input
    
 /* main loop - watch down switch */
 	while(1)								// wait for an extend command
 	{
 		down_switch = input(_DOWN_SWITCH);  // check down switch
-		if(down_switch)				// test switch
+		if(down_switch)						// test switch
 		{
+     while(lock_dwell);
 			timer = dwell;
+     while(lock_ram_state);
 			down();							// extend ram
 			while(timer >= 0)
 			{
-				pause(10);					// Wait 1 ms
+				pause(100);					// Wait
 				timer -= 1;					// decrement time count
-       if(ram_state==_RETRACTED)
-        exit;
+       			if(ram_state==_RETRACTED)
+        			 timer = -1;
 			}
-			up();							// retract ram
+//			if(ram_state == _EXTENDED)
+				up();							// retract ram
 		}
+		pause(100);
 	}
 }
 
@@ -62,7 +69,7 @@ void up()
 {
 	if(ram_state==_RETRACTED)
 		return;
-  ram_state = _RETRACTED;
+  	ram_state = _RETRACTED;
 	high(_RETRACT_SOLENOID);				// Set I/O pin high
 	pause(_SPLUSE);							// Wait
 	low(_RETRACT_SOLENOID);					// Set I/O pin low
@@ -73,13 +80,12 @@ void up()
 void down()
 {
 	if(ram_state==_RETRACTED)
- {
-   ram_state = _EXTENDED;
-  	high(_EXTEND_SOLENOID);					// Set I/O pin high
-  	pause(_SPLUSE);							// wait
-  	low(_EXTEND_SOLENOID);					// Set I/O pin low
-
- }   					
+ 	{
+    	ram_state = _EXTENDED;
+  		high(_EXTEND_SOLENOID);					// Set I/O pin high
+  		pause(_SPLUSE);							// wait
+  		low(_EXTEND_SOLENOID);					// Set I/O pin low
+ 	}   					
 	return;
 }
 
@@ -92,16 +98,17 @@ void watch_up_switch(void)
 	{
 		up_switch = input(_UP_SWITCH);
 		if (up_switch)
-			if(ram_state==_EXTENDED)
-				{
-      		ram_state = _RETRACTED;
-					high(_RETRACT_SOLENOID);				// Set I/O pin high
-				  pause(_SPLUSE);							// Wait
-				  low(_RETRACT_SOLENOID);					// Set I/O pin low
-         pause(300);
-				}    
-	  pause(100);						// wait 
- }     
+		{
+     lock_ram_state = 1;
+		  high(_RETRACT_SOLENOID);				  // Set I/O pin high
+		  pause(_SPLUSE);							    // Wait
+		  low(_RETRACT_SOLENOID);					// Set I/O pin low
+          pause(500);
+          ram_state = _RETRACTED;
+          lock_ram_state = 0;
+		}
+	    pause(100);						// wait 
+    }     
 }
 
 /* let user set dwell time */
@@ -113,10 +120,12 @@ void set_dwell(void)
 	while (1)
 	{
 		value = 0;
+   lock_dwell = 1;
 		for (i = 0; i < 8; i++)				// convert binary witch settings to decimal seconds
 			if (input(tswitch[i]))	
 				value += (int)pow(2, i);				
-		dwell = value * 100;				// convert to milliseconds
+		dwell = value * 10;				// convert to .1 seconds
+   lock_dwell = 0;
 		pause(100);							// Wait
 	}
 }
