@@ -3,7 +3,7 @@
 
 /* version */
 #define _MAJOR_VERSION_system	6
-#define _MINOR_VERSION_system	2
+#define _MINOR_VERSION_system	4
 
 /* foot switch pins */
 #define _DOWN_SWITCH		0
