@@ -3,7 +3,7 @@
 
 /* version */
 #define _MAJOR_VERSION_system	6
-#define _MINOR_VERSION_system	1
+#define _MINOR_VERSION_system	2
 
 /* foot switch pins */
 #define _DOWN_SWITCH		0
@@ -12,7 +12,7 @@
 /* solenoid control pins */
 #define _EXTEND_SOLENOID	18
 #define _RETRACT_SOLENOID	19
-#define _SPLUSE				100
+#define _SPLUSE				200
 
 /* switch pins */
 #define _DIP_0				17
