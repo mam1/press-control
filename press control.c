@@ -8,6 +8,7 @@
 	5/6/2018 	v-6.0 removed pauses where possible leds controlled directly by switches
     5/11/2018 	v-6.1 improve response to up swithch
     5/12/2018   v-6.5 add locks for shared memory
+    5/13/2018   v-6.6 revers high order bit on binary input
 
 */
 

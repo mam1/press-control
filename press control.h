@@ -15,14 +15,14 @@
 #define _SPLUSE				200		// length of time to engage solenoid on pneumatic valve
 
 /* switch pins */
-#define _DIP_0				17
-#define _DIP_1				16
-#define _DIP_2				7
-#define _DIP_3				6
-#define _DIP_4				5
-#define _DIP_5				4
-#define _DIP_6				3
-#define _DIP_7				2
+#define _DIP_0				2
+#define _DIP_1				3
+#define _DIP_2				4
+#define _DIP_3				5
+#define _DIP_4				6
+#define _DIP_5				7
+#define _DIP_6				16
+#define _DIP_7				17
 
 /* VGA disable pin */
 #define _STATUS_LED_BUS_MUX	15
