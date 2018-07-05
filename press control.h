@@ -3,7 +3,7 @@
 
 /* version */
 #define _MAJOR_VERSION_system	6
-#define _MINOR_VERSION_system	6
+#define _MINOR_VERSION_system	7
 
 /* foot switch pins */
 #define _DOWN_SWITCH		0
@@ -37,6 +37,7 @@ void watch_up_switch();				// Forward declaration, cog code
 
 /* miscelianous */
 #define _EXTENDED 			1
-#define _RETRACTED 			0              
+#define _RETRACTED 			0 
+#define _BOUNCE 			100             
 
 #endif /* PRESS_CONTROL_H_ */
