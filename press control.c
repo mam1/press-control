@@ -1,4 +1,4 @@
-/*
+p/*
 	code to control a pneumatic press
 
 	runs on a Parallax C3
@@ -9,6 +9,7 @@
     5/11/2018 	v-6.1 improve response to up swithch
     5/12/2018   v-6.5 add locks for shared memory
     5/13/2018   v-6.6 revers high order bit on binary input
+    6/5/2018	v-6.7 add debounce code
 
 */
 
@@ -18,45 +19,45 @@
 /* shared memory */
 static volatile int 		dwell;		// dwell time, shared between cogs
 static volatile int 		ram_state;	// 0-RETRACTED, 1-EXTENDED
-static volatile int   lock_dwell, lock_ram_state;
+static volatile int   	lock_dwell, lock_ram_state;
+static volatile int   	dswitch, uswitch;
 
 int main()
 {
 	int timer;							// accumulator for dwell
-	int 		down_switch;			// switch state
 	int 		*cog1;
 	int 		*cog2;
+	int 		*cog3;
+	int 		*cog4;
 
 	/* initializations */
 	high(_STATUS_LED_BUS_MUX);	// free up vga io pins */
 	up();						// retract ram
 	lock_dwell = 0;
-	lock_ram_state = 0;
 	pause(100);
 	printf("press control version %i.%i starting\n\n", _MAJOR_VERSION_system, _MINOR_VERSION_system);
-	printf("start dwell monitor cog\n");
-	cog1 = cog_run(set_dwell, 128);			// start cog to monitor dwell setting switches
-	pause(100);				     			
-	printf("dwell set to %d seconds\n", dwell);
-	printf("start switch monitor cog\n");
-	cog2 = cog_run(watch_up_switch, 128);   // start cog to monitor up switch input
 
-	/* main loop - watch down switch */
-	while (1)								// wait for an extend command
-	{
-		down_switch = input(_DOWN_SWITCH);  // check down switch
-		if (down_switch)					// test switch
+//	cog1 = cog_run(watch_up_switch, 128);	// start cog to monitor up switch
+//	cog2 = cog_run(watch_down_switch, 128);	// start cog to monitor ddown switch
+//	cog3 = cog_run(set_dwell, 128);			// start cog to monitor dwell setting switches
+	pause(100);
+
+	/* main loop */
+	while (1)
+  {								
+		if (uswitch)				// test up switch
+			up();					// retract ram
+		else if (dswitch)			// test down switch
 		{
-			while (lock_dwell); 			// wait for lock to free
-			timer = dwell;
-			while (lock_ram_state); 		// wait for lock to free
-			down();							// extend ram
-			while (timer >= 0)
+			while (lock_dwell); 	// wait for lock to free
+			timer = dwell;			// set dwell time
+			down();					// extend ram
+			while (timer > 0)
 			{
-				pause(100);					// Wait
-				timer -= 1;					// decrement time count
-				if (ram_state == _RETRACTED)
-					timer = -1;
+				pause(100);			// Wait
+				timer -= 1;			// decrement time count
+				if (uswitch)
+					timer = 0;
 			}
 			up();							// retract ram
 		}
@@ -67,9 +68,7 @@ int main()
 /* retract ram */
 void up()
 {
-	if (ram_state == _RETRACTED)
-		return;
-	ram_state = _RETRACTED;
+
 	high(_RETRACT_SOLENOID);				// Set I/O pin high
 	pause(_SPLUSE);							// Wait
 	low(_RETRACT_SOLENOID);					// Set I/O pin low
@@ -79,35 +78,67 @@ void up()
 /* extend ram */
 void down()
 {
-	if (ram_state == _RETRACTED)
-	{
-		ram_state = _EXTENDED;
-		high(_EXTEND_SOLENOID);					// Set I/O pin high
-		pause(_SPLUSE);							// wait
-		low(_EXTEND_SOLENOID);					// Set I/O pin low
-	}
+	high(_EXTEND_SOLENOID);					// Set I/O pin high
+	pause(_SPLUSE);							// wait
+	low(_EXTEND_SOLENOID);					// Set I/O pin low
 	return;
 }
 
 /********************  Cog code *************************************/
-/* watch switches */
+
+/* watch up switch */
 void watch_up_switch(void)
 {
-	int 		up_switch;				// switch state
+	int 		up_switch;				// current switch state
+	int 		pup_switch;				// previous switch state
+	int 		acc;					// bounce accumulator
+
 	while (1)
 	{
 		up_switch = input(_UP_SWITCH);	// read up switch
-		if (up_switch)
+		if(up_switch == pup_switch)		// no change in state
+			acc += 1;
+		else
 		{
-			lock_ram_state = 1;			// set memory lock
-			high(_RETRACT_SOLENOID);	// Set I/O pin high
-			pause(_SPLUSE);				// Wait
-			low(_RETRACT_SOLENOID);		// Set I/O pin low
-			pause(500);
-			ram_state = _RETRACTED;
-			lock_ram_state = 0;			// free memory lock
+			acc -= 1;
+			pup_switch = up_switch;
 		}
-		pause(100);						// wait
+
+		if(acc > _BOUNCE)
+		{
+			uswitch = 1;
+			acc = 0;
+		}
+		else
+			uswitch = 0;
+	}
+}
+
+/* watch down switch */
+void watch_down_switch(void)
+{
+	int 		down_switch;			// current switch state
+	int 		pdown_switch;			// previous switch state
+	int 		acc;					// bounce accumulator
+
+	while (1)
+	{
+		down_switch = input(_DOWN_SWITCH);	// read down switch
+		if(down_switch == pdown_switch)
+			acc += 1;
+		else
+		{
+			acc -= 1;
+			pdown_switch = down_switch;
+		}
+
+		if(acc > _BOUNCE)
+		{
+			dswitch = 1;
+			acc = 0;
+		}
+		else
+			dswitch = 0;
 	}
 }
 
