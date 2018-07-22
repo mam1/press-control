@@ -6,10 +6,13 @@
 	10/16/2017 	created mam
 	11/8/2017 	v-4.0 installed
 	5/6/2018 	v-6.0 removed pauses where possible leds controlled directly by switches
-    5/11/2018 	v-6.1 improve response to up swithch
+    5/11/2018 	v-6.1 improve response to up switch
     5/12/2018   v-6.5 add locks for shared memory
-    5/13/2018   v-6.6 revers high order bit on binary input
+    5/13/2018   v-6.6 reverse high order bit on binary input
     6/5/2018	v-6.7 add debounce code
+    7/22/2018	v-6.8 remove all commented out code, reformat, add comments
+    				  move state change variables from shared memory to cog memory
+    				  change solenoid pulse from 200ms to 300ms
 
 */
 
@@ -17,34 +20,30 @@
 #include "press control.h"
 
 /* shared memory */
-static volatile int 		dwell;				// dwell time, shared between cogs
-static volatile int 		ram_state;			// 0-RETRACTED, 1-EXTENDED
-static volatile int   		lock_dwell; 		// memory locks
-static volatile int   		ds_state, us_state;  // debounced state of switch
-static volatile int 		ds_change, us_change;
+static volatile int 		dwell;					// dwell time, shared between cogs
+static volatile int 		ram_state;				// 0-RETRACTED, 1-EXTENDED
+static volatile int   		lock_dwell; 			// memory lock
+static volatile int   		ds_state, us_state;  	// debounced state of switch
 
 int main()
 {
-	int timer;							// accumulator for dwell
-	int 		*cog1;
-	int 		*cog2;
-	int 		*cog3;
-
+	int 		timer;						// accumulator for dwell
+	int 		*cog1, *cog2, *cog3			// cog ids
 
 	/* initializations */
-	high(_STATUS_LED_BUS_MUX);	// free up vga io pins */
-	up();						// retract ram
-	lock_dwell = 0;
+	high(_STATUS_LED_BUS_MUX);				// free up vga io pins */
+	up();									// retract ram
+	lock_dwell = 0;							// clear shared memory lock
 	pause(100);
 	printf("press control version %i.%i starting\n\n", _MAJOR_VERSION_system, _MINOR_VERSION_system);
 
 	cog1 = cog_run(watch_up_switch, 128);	// start cog to monitor up switch
-	cog2 = cog_run(watch_down_switch, 128);	// start cog to monitor ddown switch
+	cog2 = cog_run(watch_down_switch, 128);	// start cog to monitor down switch
 	cog3 = cog_run(set_dwell, 128);			// start cog to monitor dwell setting switches
 	pause(100);
 
 	/* main loop */
-	while (1)
+	while (1)						// loop forever
   {								
 		if (us_state)				// test up switch
 			up();					// retract ram
@@ -53,14 +52,14 @@ int main()
 			while (lock_dwell); 	// wait for lock to free
 			timer = dwell;			// set dwell time
 			down();					// extend ram
-			while (timer > 0)
+			while (timer > 0) 		// loop until counter hits zero
 			{
 				pause(100);			// Wait
 				timer -= 1;			// decrement time count
-				if (us_state)
-					timer = 0;
+				if (us_state)		// check state of up switch
+					timer = 0;		// force loop exit
 			}
-			up();							// retract ram
+			up();					// retract ram
 		}
 		pause(100);
 	}
@@ -87,65 +86,7 @@ void down()
 
 /********************  Cog code *************************************/
 
-// /* watch up switch */
-// void watch_up_switch(void)
-// {
-// 	int 		up_switch;				// current switch state
-// 	int 		pup_switch;				// previous switch state
-// 	int 		acc;					// bounce accumulator
-
-// 	while (1)
-// 	{
-// 		up_switch = input(_UP_SWITCH);	// read up switch
-// 		if(up_switch == pup_switch)		// no change in state
-// 			acc += 1;
-// 		else
-// 		{
-// 			acc -= 1;
-// 			pup_switch = up_switch;
-// 		}
-
-// 		if(acc > _BOUNCE)
-// 		{
-// 			uswitch = 1;
-// 			pause(100);
-// 			acc = 0;
-// 		}
-// 		else
-// 			uswitch = 0;
-// 	}
-// }
-
-// /* watch down switch */
-// void watch_down_switch(void)
-// {
-// 	int 		down_switch;			// current switch state
-// 	int 		pdown_switch;			// previous switch state
-// 	int 		acc;					// bounce accumulator
-
-// 	while (1)
-// 	{
-// 		down_switch = input(_DOWN_SWITCH);	// read down switch
-// 		if(down_switch == pdown_switch)
-// 			acc += 1;
-// 		else
-// 		{
-// 			acc -= 1;
-// 			pdown_switch = down_switch;
-// 		}
-
-// 		if(acc > _BOUNCE)
-// 		{
-// 			dswitch = 1;
-// 			pause(100);
-// 			acc = 0;
-// 		}
-// 		else
-// 			dswitch = 0;
-// 	}
-// }
-
-/* let user set dwell time */
+/* watch dwell time switches */
 void set_dwell(void)
 {
 	static int 		tswitch[8] = {_DIP_0, _DIP_1, _DIP_2, _DIP_3, _DIP_4, _DIP_5, _DIP_6, _DIP_7};
@@ -164,46 +105,12 @@ void set_dwell(void)
 	}
 }
 
-
-// /*************************/
-// // This function reads the key state from the hardware.
-// extern bool_t RawKeyPressed(); 
-
-// // This holds the debounced state of the key.
-// bool_t DebouncedKeyPress = false;
-
-// // Service routine called every CHECK_MSEC to
-// // debounce both edges
-// void DebounceSwitch1(bool_t *Key_changed, bool_t *Key_pressed)
-// {
-//     static uint8_t Count = RELEASE_MSEC / CHECK_MSEC;
-//     bool_t RawState;
-//     *Key_changed = false;
-//     *Key_pressed = DebouncedKeyPress;
-//     RawState = RawKeyPressed();
-//     if (RawState == DebouncedKeyPress) {
-//         // Set the timer which will allow a change from the current state.
-//         if (DebouncedKeyPress) Count = RELEASE_MSEC / CHECK_MSEC;
-//         else                 Count = PRESS_MSEC / CHECK_MSEC;
-//     } else {
-//         // Key has changed - wait for new state to become stable.
-//         if (--Count == 0) {
-//             // Timer expired - accept the change.
-//             DebouncedKeyPress = RawState;
-//             *Key_changed=true;
-//             *Key_pressed=DebouncedKeyPress;
-//             // And reset the timer.
-//             if (DebouncedKeyPress) Count = RELEASE_MSEC / CHECK_MSEC;
-//             else                 Count = PRESS_MSEC / CHECK_MSEC;
-//         }
-//     }
-// }
-
 /* watch down switch */
 void watch_down_switch(void)
 {
-    static uint8_t 	Count = RELEASE_MSEC / CHECK_MSEC;
-    int 			RawState;
+	int 	 			ds_change;
+    static uint8_t 		Count = RELEASE_MSEC / CHECK_MSEC;
+    int 				RawState;
 
     while(1)
     {
@@ -239,8 +146,9 @@ void watch_down_switch(void)
 /* watch up switch */
 void watch_up_switch(void)
 {
-    static uint8_t 	Count = RELEASE_MSEC / CHECK_MSEC;
-    int 			RawState;
+	int 	 			us_change;
+    static uint8_t 		Count = RELEASE_MSEC / CHECK_MSEC;
+    int 				RawState;
 
     while(1)
     {
