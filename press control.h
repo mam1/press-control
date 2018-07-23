@@ -12,9 +12,8 @@
 /* solenoid control pins */
 #define _EXTEND_SOLENOID	18
 #define _RETRACT_SOLENOID	19
-#define _SPLUSE				300		// length of time to engage solenoid on pneumatic valve
 
-/* switch pins */
+/* dwell switch pins */
 #define _DIP_0				2
 #define _DIP_1				3
 #define _DIP_2				4
@@ -39,11 +38,10 @@ void watch_down_switch();			// Forward declaration, cog code
 /* miscelianous */
 #define _EXTENDED 			1
 #define _RETRACTED 			0 
-#define _BOUNCE 			100  
-
-#define CHECK_MSEC  5   // Read hardware every 5 msec
-#define PRESS_MSEC  10  // Stable time before registering pressed
-#define RELEASE_MSEC    100 // Stable time before registering released
+#define _SPLUSE				300		// length of time to engage solenoid on pneumatic valve
+#define CHECK_MSEC  		5   	// Read hardware every 5 msec
+#define PRESS_MSEC  		10  	// Stable time before registering pressed
+#define RELEASE_MSEC    	100 	// Stable time before registering released
           
 
 #endif /* PRESS_CONTROL_H_ */
