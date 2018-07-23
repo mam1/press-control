@@ -11,8 +11,9 @@
     5/13/2018   v-6.6 reverse high order bit on binary input
     6/5/2018	v-6.7 add debounce code
     7/22/2018	v-6.8 remove all commented out code, reformat, add comments
-    				  move state change variables from shared memory to cog memory
+    7/22/2018	v-6.9 move state change variables from shared memory to cog memory
     				  change solenoid pulse from 200ms to 300ms
+    				  remove pause on main loop
 
 */
 
@@ -21,7 +22,6 @@
 
 /* shared memory */
 static volatile int 		dwell;					// dwell time, shared between cogs
-static volatile int 		ram_state;				// 0-RETRACTED, 1-EXTENDED
 static volatile int   		lock_dwell; 			// memory lock
 static volatile int   		ds_state, us_state;  	// debounced state of switch
 
@@ -61,7 +61,6 @@ int main()
 			}
 			up();					// retract ram
 		}
-		pause(100);
 	}
 }
 
@@ -95,13 +94,13 @@ void set_dwell(void)
 	while (1)
 	{
 		value = 0;
-		lock_dwell = 1;				//set memory lock
 		for (i = 0; i < 8; i++)		// convert binary witch settings to decimal seconds
 			if (input(tswitch[i]))
 				value += (int)pow(2, i);
-		dwell = value * 10;			// convert to .1 seconds
+		lock_dwell = 1;				//set memory lock	
+		dwell = value * 10;			// convert to .1 seconds and load shared memory
 		lock_dwell = 0;				// free memory lock
-		pause(100);					// Wait
+		pause(CHECK_MSEC);			// Wait
 	}
 }
 
