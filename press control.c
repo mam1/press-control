@@ -13,7 +13,7 @@
     7/22/2018     v-6.8 remove all commented out code, reformat, add comments
     7/22/2018     v-6.9 move state change variables from shared memory to cog memory
                         change solenoid pulse from 200ms to 300ms
-                        remove pause on main loop
+                        remove pause in main loop
 
 */
 
