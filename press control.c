@@ -23,7 +23,7 @@
 /* shared memory */
 static volatile int         dwell;                  // dwell time, shared between cogs
 static volatile int         lock_dwell;             // memory lock
-static volatile int          ds_state, us_state;    // debounced state of switch
+static volatile int         ds_state, us_state;     // debounced state of switch
 
 int main()
 {
@@ -88,7 +88,7 @@ void down()
 /* watch dwell time switches */
 void set_dwell(void)
 {
-    static int         tswitch[8] = {_DIP_0, _DIP_1, _DIP_2, _DIP_3, _DIP_4, _DIP_5, _DIP_6, _DIP_7};
+    static int      tswitch[8] = {_DIP_0, _DIP_1, _DIP_2, _DIP_3, _DIP_4, _DIP_5, _DIP_6, _DIP_7};
     int             value, i;
 
     while (1)
@@ -108,8 +108,8 @@ void set_dwell(void)
 void watch_down_switch(void)
 {
     int                  ds_change;
-    static uint8_t         Count = RELEASE_MSEC / CHECK_MSEC;
-    int                 RawState;
+    static uint8_t       Count = RELEASE_MSEC / CHECK_MSEC;
+    int                  RawState;
 
     while(1)
     {
@@ -146,8 +146,8 @@ void watch_down_switch(void)
 void watch_up_switch(void)
 {
     int                  us_change;
-    static uint8_t         Count = RELEASE_MSEC / CHECK_MSEC;
-    int                 RawState;
+    static uint8_t       Count = RELEASE_MSEC / CHECK_MSEC;
+    int                  RawState;
 
     while(1)
     {
