@@ -9,11 +9,11 @@
 #define _DOWN_SWITCH		0
 #define _UP_SWITCH			1
 
-/* solenoid control pins */
+/* solenoid control IO pins */
 #define _EXTEND_SOLENOID	18
 #define _RETRACT_SOLENOID	19
 
-/* dwell switch pins */
+/* dwell switch IO pins */
 #define _DIP_0				2
 #define _DIP_1				3
 #define _DIP_2				4
@@ -23,12 +23,12 @@
 #define _DIP_6				16
 #define _DIP_7				17
 
-/* VGA disable pin */
-#define _STATUS_LED_BUS_MUX	15
+/* VGA disable IO pin */
+#define _STATUS_LED_BUS_MUX	15      // make the VGA pins available for gneral use
 
 /* ram control  */
-void up(void);
-void down(void);  
+void up(void);                      // Forward declaration
+void down(void);                    // Forward declaration
 
 /* cogs */
 void set_dwell();					// Forward declaration, cog code
