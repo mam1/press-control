@@ -14,6 +14,7 @@
     7/22/2018     v-6.9 move state change variables from shared memory to cog memory
                         change solenoid pulse from 200ms to 300ms
                         remove pause in main loop
+    7/10/2018     v-6.10 fix bug in up switch debounce code
 
 */
 
