@@ -3,18 +3,18 @@
 
     runs on a Parallax C3
 
-    10/16/2017    created mam
-    11/8/2017     v-4.0 installed
-    5/6/2018      v-6.0 removed pauses where possible leds controlled directly by switches
-    5/11/2018     v-6.1 improve response to up switch
-    5/12/2018     v-6.5 add locks for shared memory
-    5/13/2018     v-6.6 reverse high order bit on binary input
-    6/5/2018      v-6.7 add debounce code
-    7/22/2018     v-6.8 remove all commented out code, reformat, add comments
-    7/22/2018     v-6.9 move state change variables from shared memory to cog memory
-                        change solenoid pulse from 200ms to 300ms
-                        remove pause in main loop
-    7/10/2018     v-6.10 fix bug in up switch debounce code
+    10/16/2017             created mam
+    11/8/2017      v-4.0   installed
+    5/6/2018       v-6.0   removed pauses where possible leds controlled directly by switches
+    5/11/2018      v-6.1   improve response to up switch
+    5/12/2018      v-6.5   add locks for shared memory
+    5/13/2018      v-6.6   reverse high order bit on binary input
+    6/5/2018       v-6.7   add debounce code
+    7/22/2018      v-6.8   remove all commented out code, reformat, add comments
+    7/22/2018      v-6.9   move state change variables from shared memory to cog memory
+                           change solenoid pulse from 200ms to 300ms
+                           remove pause in main loop
+    7/10/2019      v-6.10  fix bug in up switch debounce code
 
 */
 
