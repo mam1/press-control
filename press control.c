@@ -151,7 +151,7 @@ void watch_up_switch(void)
 
     while(1)
     {
-        ds_change = 0;
+        us_change = 0;
         RawState = input(_UP_SWITCH);    // read up switch
         if (RawState == us_state) 
         {
