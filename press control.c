@@ -15,6 +15,8 @@
                            change solenoid pulse from 200ms to 300ms
                            remove pause in main loop
     7/10/2019      v-6.10  fix bug in up switch debounce code
+    10/19/2019     v-6.11  extend length of pulse on the solenoid valve
+                           add trace code output to terminal
 
 */
 
@@ -33,11 +35,13 @@ int main()
 
     /* initializations */
     high(_STATUS_LED_BUS_MUX);                // free up vga io pins */
+    ds_state = 0;                             // set initial down switch state
+    us_state = 0;                             // set initial up switch state
     up();                                     // retract ram
     lock_dwell = 0;                           // clear shared memory lock
     pause(100);
     printf("press control version %i.%i starting\n\n", _MAJOR_VERSION_system, _MINOR_VERSION_system);
-
+    printf("up switch state = %i, down switch state = %i\n", us_state, ds_state );
     cog1 = cog_run(watch_up_switch, 128);    // start cog to monitor up switch
     cog2 = cog_run(watch_down_switch, 128);  // start cog to monitor down switch
     cog3 = cog_run(set_dwell, 128);          // start cog to monitor dwell setting switches
@@ -45,20 +49,25 @@ int main()
 
     /* main loop */
     while (1)                        // loop forever
-  {                                
+    {
+        pause(1000);
+        printf("up switch state = %i, down switch state = %i\n", us_state, ds_state );
         if (us_state)                // test up switch
             up();                    // retract ram
         else if (ds_state)           // test down switch
         {
             while (lock_dwell);      // wait for lock to free
-            timer = dwell;           // set dwell time
+            // timer = dwell;           // set dwell time
+            timer = 50;
             down();                  // extend ram
             while (timer > 0)        // loop until counter hits zero
             {
                 pause(100);          // Wait
                 timer -= 1;          // decrement time count
-                if (us_state)        // check state of up switch
+                if (us_state) {       // check state of up switch
+                    printf("%s\n", "up switch tested on\n");
                     timer = 0;       // force loop exit
+                }
             }
             up();                    // retract ram
         }
@@ -68,7 +77,7 @@ int main()
 /* retract ram */
 void up()
 {
-
+    printf("%s\n", "pulse retract soleniod" );
     high(_RETRACT_SOLENOID);         // Set I/O pin high
     pause(_SPLUSE);                  // Wait
     low(_RETRACT_SOLENOID);          // Set I/O pin low
@@ -78,6 +87,7 @@ void up()
 /* extend ram */
 void down()
 {
+    printf("%s\n", "pulse extend soleniod" );
     high(_EXTEND_SOLENOID);           // Set I/O pin high
     pause(_SPLUSE);                   // wait
     low(_EXTEND_SOLENOID);            // Set I/O pin low
@@ -98,7 +108,7 @@ void set_dwell(void)
         for (i = 0; i < 8; i++)        // convert binary witch settings to decimal seconds
             if (input(tswitch[i]))
                 value += (int)pow(2, i);
-        lock_dwell = 1;                //set memory lock    
+        lock_dwell = 1;                //set memory lock
         dwell = value * 10;            // convert to .1 seconds and load shared memory
         lock_dwell = 0;                // free memory lock
         pause(CHECK_MSEC);             // Wait
@@ -112,30 +122,30 @@ void watch_down_switch(void)
     static uint8_t       Count = RELEASE_MSEC / CHECK_MSEC;
     int                  RawState;
 
-    while(1)
+    while (1)
     {
         ds_change = 0;
         RawState = input(_DOWN_SWITCH);    // read down switch
-        if (RawState == ds_state) 
+        if (RawState == ds_state)
         {
             // Set the timer which will allow a change from the current state.
-            if (ds_state) 
+            if (ds_state)
                 Count = RELEASE_MSEC / CHECK_MSEC;
-            else                 
+            else
                 Count = PRESS_MSEC / CHECK_MSEC;
-        } 
-        else 
+        }
+        else
         {
             // Key has changed - wait for new state to become stable.
-            if (--Count == 0) 
+            if (--Count == 0)
             {
                 // Timer expired - accept the change.
                 ds_state = RawState;
                 ds_change = 1;
                 // And reset the timer.
-                if (ds_state) 
+                if (ds_state)
                     Count = RELEASE_MSEC / CHECK_MSEC;
-                else                 
+                else
                     Count = PRESS_MSEC / CHECK_MSEC;
             }
         }
@@ -150,19 +160,19 @@ void watch_up_switch(void)
     static uint8_t       Count = RELEASE_MSEC / CHECK_MSEC;
     int                  RawState;
 
-    while(1)
+    while (1)
     {
         us_change = 0;
         RawState = input(_UP_SWITCH);    // read up switch
-        if (RawState == us_state) 
+        if (RawState == us_state)
         {
             // Set the timer which will allow a change from the current state.
-            if (us_state) 
+            if (us_state)
                 Count = RELEASE_MSEC / CHECK_MSEC;
-            else                 
+            else
                 Count = PRESS_MSEC / CHECK_MSEC;
-        } 
-        else 
+        }
+        else
         {
             // Key has changed - wait for new state to become stable.
             if (--Count == 0) {
@@ -170,9 +180,9 @@ void watch_up_switch(void)
                 us_state = RawState;
                 us_change = 1;
                 // And reset the timer.
-                if (us_state) 
+                if (us_state)
                     Count = RELEASE_MSEC / CHECK_MSEC;
-                else                 
+                else
                     Count = PRESS_MSEC / CHECK_MSEC;
             }
         }
