@@ -29,7 +29,7 @@ static volatile int         ds_state, us_state;     // debounced state of switch
 int main()
 {
     int         timer;                        // accumulator for dwell
-    int         *cog1, *cog2, *cog3           // cog ids
+    int         *cog1, *cog2, *cog3;           // cog ids
 
     /* initializations */
     high(_STATUS_LED_BUS_MUX);                // free up vga io pins */
