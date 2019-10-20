@@ -15,7 +15,7 @@
                            change solenoid pulse from 200ms to 300ms
                            remove pause in main loop
     7/10/2019      v-6.10  fix bug in up switch debounce code
-    10/19/2019     v-6.11  extend length of pulse on the solenoid valve
+    10/19/2019     v-6.11  extend length of pulse on the solenoid valve to 1000ms
                            add trace code output to terminal
 
 */
@@ -50,15 +50,15 @@ int main()
     /* main loop */
     while (1)                        // loop forever
     {
-        pause(1000);
+        // pause(1000);
         printf("up switch state = %i, down switch state = %i\n", us_state, ds_state );
         if (us_state)                // test up switch
             up();                    // retract ram
         else if (ds_state)           // test down switch
         {
             while (lock_dwell);      // wait for lock to free
-            // timer = dwell;           // set dwell time
-            timer = 50;
+            timer = dwell;           // set dwell time
+            // timer = 50;
             down();                  // extend ram
             while (timer > 0)        // loop until counter hits zero
             {
@@ -77,7 +77,7 @@ int main()
 /* retract ram */
 void up()
 {
-    printf("%s\n", "pulse retract soleniod" );
+    printf("%s\n", "pulse retract solenoid" );
     high(_RETRACT_SOLENOID);         // Set I/O pin high
     pause(_SPLUSE);                  // Wait
     low(_RETRACT_SOLENOID);          // Set I/O pin low
@@ -87,7 +87,7 @@ void up()
 /* extend ram */
 void down()
 {
-    printf("%s\n", "pulse extend soleniod" );
+    printf("%s\n", "pulse extend solenoid" );
     high(_EXTEND_SOLENOID);           // Set I/O pin high
     pause(_SPLUSE);                   // wait
     low(_EXTEND_SOLENOID);            // Set I/O pin low
