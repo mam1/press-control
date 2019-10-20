@@ -40,8 +40,11 @@ int main()
     up();                                     // retract ram
     lock_dwell = 0;                           // clear shared memory lock
     pause(100);
+
     printf("press control version %i.%i starting\n\n", _MAJOR_VERSION_system, _MINOR_VERSION_system);
+#if _DEBUG == 1   
     printf("up switch state = %i, down switch state = %i\n", us_state, ds_state );
+#endif
     cog1 = cog_run(watch_up_switch, 128);    // start cog to monitor up switch
     cog2 = cog_run(watch_down_switch, 128);  // start cog to monitor down switch
     cog3 = cog_run(set_dwell, 128);          // start cog to monitor dwell setting switches
@@ -50,22 +53,32 @@ int main()
     /* main loop */
     while (1)                        // loop forever
     {
-        // pause(1000);
+#if _DEBUG == 1
+        pause(1000);
         printf("up switch state = %i, down switch state = %i\n", us_state, ds_state );
+#endif
         if (us_state)                // test up switch
             up();                    // retract ram
         else if (ds_state)           // test down switch
         {
             while (lock_dwell);      // wait for lock to free
-            timer = dwell;           // set dwell time
-            // timer = 50;
+
+#if _DEBUG == 1
+            timer = 50;               // set dewell time
+#else
+            timer = dwell;            // set dwell time froms switchwes
+#endif
+
             down();                  // extend ram
             while (timer > 0)        // loop until counter hits zero
             {
                 pause(100);          // Wait
                 timer -= 1;          // decrement time count
                 if (us_state) {       // check state of up switch
+#if _DEBUG == 1
+
                     printf("%s\n", "up switch tested on\n");
+#endif
                     timer = 0;       // force loop exit
                 }
             }
@@ -77,7 +90,9 @@ int main()
 /* retract ram */
 void up()
 {
+#if _DEBUG == 1
     printf("%s\n", "pulse retract solenoid" );
+#endif
     high(_RETRACT_SOLENOID);         // Set I/O pin high
     pause(_SPLUSE);                  // Wait
     low(_RETRACT_SOLENOID);          // Set I/O pin low
@@ -87,7 +102,9 @@ void up()
 /* extend ram */
 void down()
 {
+#if _DEBUG == 1
     printf("%s\n", "pulse extend solenoid" );
+#endif
     high(_EXTEND_SOLENOID);           // Set I/O pin high
     pause(_SPLUSE);                   // wait
     low(_EXTEND_SOLENOID);            // Set I/O pin low

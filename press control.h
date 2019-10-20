@@ -42,6 +42,7 @@ void watch_down_switch();           // Forward declaration, cog code
 #define CHECK_MSEC            5      // Read hardware every 5 msec
 #define PRESS_MSEC            10     // Stable time before registering pressed
 #define RELEASE_MSEC          100    // Stable time before registering released
+#define _DEBUG                1      // 1 to activate debug code
           
 
 #endif /* PRESS_CONTROL_H_ */
